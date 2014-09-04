@@ -1,0 +1,5 @@
+name = Greeting
+version = 7.x-1.0-dev
+description = Demo e-mail sending in Drupal.
+core = 7.x
+package = Examples

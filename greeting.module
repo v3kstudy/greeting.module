@@ -1,0 +1,49 @@
+<?php
+
+/**
+ * Implements hook_mail()
+ *
+ * @param string $key
+ * @param array $message
+ * @param array $params
+ */
+function greeting_mail($key, &$message, $params)
+{
+    if ($key === 'welcome') {
+        $message['subject'] = t('Welcome !first_name !last_name to Drupal world!', array(
+            '!first_name' => $params['first_name'],
+            '!last_name'  => $params['last_name'],
+        ));
+
+        $message['body'][] = t("Hello !first_name,\n\nHope you find something useful!", array(
+            '!first_name' => $params['first_name'],
+            '!last_name'  => $params['last_name'],
+        ));
+    }
+}
+
+/**
+ * Implements hook_mail_alter().
+ *
+ * @param array $mesage
+ */
+function greeting_mail_alter(&$mesage)
+{
+    if ('greeting' === $mesage['module'] && 'welcome') {
+        $mesage['body'][] = t('!site_name', array('!site_name' => variable_get('site_name')));
+    }
+}
+
+/**
+ * Very basic example of sending email in Drupal.
+ */
+function greeting_example_1()
+{
+    $module = 'greeting';
+    $key = 'welcome';
+    $to = 'Andy Truong <heyandy@x.v3k.net>';
+    $language = db_query("SELECT * FROM {languages} WHERE language = :language", array(':language' => 'en'));
+    $params = array('first_name' => 'Andy', 'last_name' => 'Truong');
+    $from = variable_get('site_mail', 'webmaster@domain.com');
+    drupal_mail($module, $key, $to, $language, $params, $from);
+}
